@@ -1,0 +1,385 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Up</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+    body{
+        font-family: Ubuntu Mono;
+    }
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    .cont{
+        background-color: green;
+        background-size: cover;
+        overflow: hidden;
+    }
+    .road{
+        width: 600px;
+        height: 100vh;
+        background-color: rgba(27, 27, 27, 0.848);
+        margin: auto;
+        position: relative;
+        border-left: 10px solid gray;
+        border-right: 10px solid gray;
+
+    }
+    .car{
+        width: 60px;
+        height: 150px;
+        background-image: url("{% static 'car_5.png' %}");
+        background-size: cover;
+        position: absolute;
+        background-position: center;
+        top: 75%;
+        left: 490px;
+        z-index: 99;
+        background-size: cover;
+    }
+    .line{
+        width: 18px;
+        height: 150px;
+        position: absolute;
+        background-color: white;
+        margin-left: 147px;
+    }
+    
+    .line_s{
+        width: 18px;
+        height: 530px;
+        position: absolute;
+        background-color: rgb(255, 255, 255);
+        margin-left: 294px;
+    }
+    .line_r{
+        width: 18px;
+        height: 150px;
+        position: absolute;
+        background-color: white;
+        margin-left: 441px;
+    }
+    .vech{
+        width: 60px;
+        height: 150px;
+        background-size: cover;
+        background-position: center;
+        position: absolute;
+        transform: rotate(180deg);
+        top: 30%;
+        left: 300px;
+        z-index: 98;
+    }
+    .vech_rev{
+        width: 60px;
+        height: 150px;
+        border-radius: 0.6em;
+        background-size: cover;
+        background-position: center;
+        position: absolute;
+        bottom: 30%;
+        left: 300px;
+        z-index: 98;
+    }
+    .ready{
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(25, 25, 25, 0.848);
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: all ease 300ms;
+    }
+    .btn{
+        margin-top: 1em;
+        width: 100%;
+    }
+    .finish{
+        position: absolute;
+        top: -100%;
+        left: 0;
+        background-color: rgba(25, 25, 25, 0.848);
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: all ease 300ms;
+    }
+    .prog{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(28% - 2em);
+        background-color: black;
+        padding: 1em;
+    }
+    .button{
+        color: white;
+        background-color: rgba(255,0,0,0.7);
+        padding: 5px;
+        text-decoration: none;
+        font-size: 20px;
+        border-radius: 0.4em;
+        transition: all ease 300ms;
+        outline: none;
+        border: none;
+        cursor: pointer;
+    }
+    .button:hover{
+        color: red;
+        background-color: rgba(255,255,255,0.8);
+    }
+</style>
+<body>
+    <div class="cont">
+        <div class="road">
+            
+        </div>
+    </div>
+    
+    <div class="prog" style="color: white; font-size:2em;">       
+        <div class="money"style='display: flex;gap:0.2em; width:100%;align-items:center;'>
+            <span id="money">Money earned - 0</span>
+            <img src="{% static 'ghc.png' %}" width="35px"height="35px">
+        </div>
+        <div class="timer">Next pay - 5s</div>
+    </div>
+    <div class="ready">
+        <div class="tabl">
+            <span style="color: white; font-size:2em;">Are you ready?</span>
+            <div class="btn">
+            <button onclick=Start() class="button">Yes</button>
+            <a class="button" href="{% url 'garage' %}">No</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="finish">
+        <div class="tabl">
+            <div style="color: white; font-size:2em;display: flex;justify-content:center;gap:0.2em; width:100%;align-items:center;"><span id="gg">Your car broke down but you made money - 0</span> <img src="{% static 'ghc.png' %}" width="35px"height="35px"></div>
+            <div class="btn">
+            <a id="leave" href="" class="button">
+                Back to garage
+            </a>
+        </div>
+    </div>
+    </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        const roada = document.querySelector('.road');
+        var player = {step:{% if user.car.engine > 10 %}10{% else %}{{user.car.engine}}+1{% endif %},step_l:{% if user.car.wheels > 8 %}8{% else %}{{user.car.wheels}}{% endif %},start:false}
+        var keys = {ArrowUp:false,ArrowDown:false,ArrowLeft:false,ArrowRight:false}
+        var money = 0;
+        var inter,inter2;
+        document.addEventListener('keydown',keyDown)
+        document.addEventListener('keyup',keyUp)
+        var bgss = {0:"{% static 'car_1.png' %}",1:"{% static 'car_2.png' %}",2:"{% static 'car_4.png' %}"}
+        var muz = {1:new Audio("{% static 'muz_1.mp3' %}"),2:new Audio("{% static 'muz_2.mp3' %}"),3:new Audio("{% static 'muz_3.mp3' %}"),4:new Audio("{% static 'muz_4.mp3' %}")}
+        var gg = {1:200,0:480,2:720}
+        var time = 5
+        var invulnerability = false
+        var cars = {% if user.car.lvl > 10 %}5{% else %}4{% endif %}
+        var pk = '{{user.pk}}'
+        var token = '{{token}}'
+
+        function finish(){
+            document.querySelector('#gg').innerHTML = `Your car broke down and you made money - ${money} `
+            var n = document.querySelector('.finish');
+            n.style.top = '0'
+            document.querySelector('#leave').href = pk+'/'+token+'/'+money+'/'
+            clearInterval(inter)
+            clearInterval(inter2)
+        }
+
+        function keyDown(ev){
+            keys[ev.key]=true;
+        }
+
+        function keyUp(ev){
+            
+            keys[ev.key]=false;
+        }
+
+        function movelines(){
+            var roadlines = document.querySelectorAll('.line');
+            roadlines.forEach(function(item){
+                item.y = item.offsetTop;
+                if (item.y >= 800){
+                    item.y = item.y - 900;
+                }
+                item.y = item.y + player.step;
+                item.style.top = item.y + 'px'; 
+            })
+        }
+
+
+        function movelines_2(){
+            var roadlines_2 = document.querySelectorAll('.line_r');
+            roadlines_2.forEach(function(item){
+                item.y = item.offsetTop;
+                if (item.y >= 800){
+                    item.y = item.y - 900;
+                }
+                item.y = item.y + player.step;
+                item.style.top = item.y + 'px'; 
+            })
+        }
+
+        function movecars(play){
+            var cars = document.querySelectorAll('.vech')
+            var num = 0
+            cars.forEach(function(it){
+                pt_x = (play.offsetLeft + (play.offsetWidth-2)/2)-(it.offsetLeft + it.offsetWidth/2)
+                pt_y = (play.offsetTop + (play.offsetHeight-2)/2)-(it.offsetTop + it.offsetHeight/2)
+                if (Math.abs(pt_x)<=(play.offsetWidth-3)/2+it.offsetWidth/2&&Math.abs(pt_y)<=(play.offsetHeight-6)/2+it.offsetHeight/2){
+                    player.start = false;
+                    finish()
+                }
+                if (it.offsetTop > 750){
+                    var m = Math.floor(Math.random() * 3)
+                    it.style.top = (((num+1)*400)*-1)+'px'
+                    it.style.backgroundImage = 'url('+bgss[m]+')';
+                    it.style.left = 30 + (80*(Math.floor(Math.random() * 3))) + 'px';
+                    it.style.top = {% if user.car.engine > 5 %}-600{% else %}-300{% endif %} + 'px';
+                }
+                it.style.top = (it.offsetTop + player.step) + 2 + 'px';
+                num++;
+            })
+        }
+
+        function movecars_rev(play){
+            
+            var cars = document.querySelectorAll('.vech_rev')
+            var num = 0
+            cars.forEach(function(it){
+                pt_x = (play.offsetLeft + (play.offsetWidth-2)/2)-((it.offsetLeft) + (it.offsetWidth)/2)
+                pt_y = (play.offsetTop + (play.offsetHeight-2)/2)-((it.offsetTop+15) + (it.offsetHeight-8)/2)
+                if (Math.abs(pt_x)<=(play.offsetWidth-5)/2+(it.offsetWidth)/2&&Math.abs(pt_y)<=(play.offsetHeight-5)/2+(it.offsetHeight-10)/2){
+                    player.start = false;
+                    finish()
+                }
+
+                if (it.offsetTop > 750){
+                    it.style.top = (((num+1)*400)*-1)+'px'
+                    var m = Math.floor(Math.random() * 3)
+                    it.style.backgroundImage = 'url('+bgss[m]+')';
+                    it.style.left = 220 + (80*(Math.floor(Math.random() * 4)+1)) + 'px';
+                    it.style.top = {% if user.car.engine > 5 %}-500{% else %}-300{% endif %}  + 'px';
+                }
+                it.style.top = (it.offsetTop + player.step)+1 + 'px';
+                num++;
+            })
+        }
+
+        function playarea(){
+            var playwcar = document.querySelector('.car')
+            let road = roada.getBoundingClientRect()
+            player.y = playwcar.offsetTop;
+            player.x = playwcar.offsetLeft;
+            if(player.start){
+                movelines();
+                movelines_2();
+                movecars(playwcar);
+                movecars_rev(playwcar);
+                if(keys.ArrowUp && player.y-player.step > 0){
+                    player.y = player.y-player.step;
+                }
+                if(keys.ArrowDown && player.y+player.step < (road.height-120)){
+                    player.y = player.y+player.step;
+                }
+                if(keys.ArrowLeft && player.x-player.step_l > 0){
+                    player.x = player.x-player.step_l;
+                }
+                if(keys.ArrowRight && player.x+player.step_l < (road.width-80)){
+                    player.x = player.x+player.step_l;
+                }
+                playwcar.style.top = player.y + 'px';
+                playwcar.style.left = player.x + 'px';
+                window.requestAnimationFrame(playarea)
+            }
+        }
+
+        function Start(){
+            var n = document.querySelector('.ready')
+            n.style.top = '-100%'
+            muz[Math.floor(Math.random() * 4)+1].play()
+            init();
+        }
+
+        function inter(){
+            time = 5
+            money += 50*{{user.car.lvl}}
+            document.querySelector('#money').innerHTML = `Money earned - ${money}`;
+        }
+
+        function init(){
+            document.querySelector('.ready').style.display = "none"
+            player.start = true;
+            inter = setInterval(inter,5000)
+            inter2 = setInterval(function(){
+                document.querySelector('.timer').innerHTML = `Next pay - ${time}s`
+                time-=1
+            },1000)
+            window.requestAnimationFrame(playarea);
+            var playcar = document.createElement('div');
+            playcar.setAttribute('class','car');
+            roada.appendChild(playcar);
+
+            playcar.x = playcar.offsetLeft;
+            playcar.y = playcar.offsetTop;
+
+            for(x=0;x<8;x++){
+                var roadlines = document.createElement('div');
+                roadlines.setAttribute('class','line');
+                roadlines.y = x*180
+                roadlines.style.top = roadlines.y + 'px'
+                roada.appendChild(roadlines);
+                if (x%2==0){
+                var roadlines_1 = document.createElement('div');
+                roadlines_1.setAttribute('class','line_s');
+                roadlines_1.y = x*280
+                roadlines_1.style.top = roadlines.y + 'px'
+                roada.appendChild(roadlines_1);
+                }
+                var roadlines_2 = document.createElement('div');
+                roadlines_2.setAttribute('class','line_r');
+                roadlines_2.y = x*180
+                roadlines_2.style.top = roadlines.y + 'px'
+                roada.appendChild(roadlines_2);
+            }
+            for (x=0;x<cars;x++){
+                var veh = document.createElement('div');
+                veh.setAttribute('class','vech');
+                var m = Math.floor(Math.random() * 3)
+                veh.style.left = 20+(100*(Math.floor(Math.random() * 3))) + 'px';
+                veh.style.backgroundImage = 'url('+bgss[m]+')';
+                veh.style.top = (((x)*400)*-1)+'px'
+                roada.appendChild(veh)
+            }
+            for (x=0;x<cars;x++){
+                var veh = document.createElement('div');
+                veh.setAttribute('class','vech_rev');
+                var m = Math.floor(Math.random() * 3)
+                veh.style.left = 220 + (80*(Math.floor(Math.random() * 4)+1)) + 'px';
+                veh.style.backgroundImage = 'url('+bgss[m]+')';
+                veh.style.top = (((x)*400)*-1)+'px'
+                roada.appendChild(veh)
+            }
+            
+        }
+    </script>
+</body>
+</html>

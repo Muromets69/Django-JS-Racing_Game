@@ -1,0 +1,443 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag Racing</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+    body{
+        font-family: Ubuntu Mono;
+    }
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    .cont{
+        background-color: green;
+        background-size: cover;
+        overflow: hidden;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .ready_n{
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(25, 25, 25, 0.848);
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: all ease 300ms;
+    }
+    .tabl{
+        width: calc(100% - 2em);
+        height: 20vh;
+        background-color: rgba(27, 27, 27, 0.848);
+        border-bottom: 2px solid white;
+        padding: 1em;
+    }
+    .road{
+        width: 100vw;
+        height: 400px;
+        background-color: rgba(27, 27, 27, 0.848);
+        position: relative;
+        border-top: 10px solid gray;
+        border-bottom: 10px solid gray;
+    }
+    .line{
+        width: 9vw;
+        height: 18px;
+        position: absolute;
+        background-color: white;
+        margin-top: 182px;
+    }
+    .start{
+        position: absolute;
+        top: 0;
+        left: 295px;
+        height: 100%;
+        width: 38px;
+        background-color: white;
+        z-index: 998;
+    }
+    .mycar{
+        width: 310px;
+        height: 110px;
+        background-image: url("{% static 'carn.png' %}");
+        background-size: cover;
+        position: absolute;
+        background-position: center;
+        bottom: 50px;
+        left: -20px;
+        z-index: 999;
+    }
+    .car{
+        width: 310px;
+        height: 110px;
+        background-image: url("{% static 'car_f.png' %}");
+        background-size: cover;
+        position: absolute;
+        background-position: center;
+        top: 50px;
+        left: -20px;
+        z-index: 999;
+    }
+    .finish{
+        position: absolute;
+        top: 0;
+        left: {% if size == '1' %}6000px{% else %}24000px{% endif %};
+        height: 100%;
+        width: 38px;
+        z-index: 190;
+        background-color: white;
+    }
+    .f_text{
+        font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+        font-weight: 800;
+        transform: rotate(90deg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        z-index: 190;
+        font-size: 20px;
+        letter-spacing: 10px;
+    }
+    .button{
+        color: white;
+        background-color: rgba(255,0,0,0.7);
+        padding: 5px;
+        text-decoration: none;
+        font-size: 20px;
+        border-radius: 0.4em;
+        transition: all ease 300ms;
+        outline: none;
+        border: none;
+        cursor: pointer;
+    }
+    .button:hover{
+        color: red;
+        background-color: rgba(255,255,255,0.8);
+    }
+    .btn{
+        margin-top: 1em;
+        width: 100%;
+
+    }
+    .finish_n{
+        position: absolute;
+        top: -100%;
+        left: 0;
+        background-color: rgba(25, 25, 25, 0.848);
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        transition: all ease 300ms;
+    }
+    </style>
+</head>
+<body>
+    <div class="cont">
+        <div class="tabl">
+            <div style="display: flex;width:100%;justify-content: space-between;">
+                <div style="display: flex;flex-direction: column;color: white;height: 100%;">
+                    <span>You - {{user.name}}</span>
+                    <span>Your car name - {{user.car.name}}</span>
+                    <span>Your lvl - {{user.ghoul_lvl}}</span>
+                </div>
+                <div style="display: flex;flex-direction: column;align-items: flex-end;color: white;height: 100%;">
+                    <span>Enemy - Enemy name</span>
+                    <span>{{enemy.car.name}} - Enemy car name</span>
+                    <span>{{enemy.lvl}} - Enemy lvl</span>
+                </div>
+            </div>
+            <div style=" color:white;display: flex; gap: 0.4em;height: 100%;align-items: center;justify-content: center;">
+                <div>
+                    <span id="mygear">Your Speed: 0</span>
+                    <span id="myspeed">Your Gear: 0</span>
+                </div>
+                <span>|</span>
+                <div>
+                    <span id="engear">Enemy Speed: 0</span>
+                    <span id="enspeed">Enemy Gear: 0</span>
+                </div>
+            </div>
+        </div>
+        <div class="road">
+            <div class="start">
+                <div class="f_text">
+                    START
+                </div>
+            </div> 
+            <div class="mycar">
+                <div style="color: white;width:100%;font-size: 1.4em;height: 100%;display: flex;justify-content: center;align-items: center;">You</div>
+            </div> 
+            <div class="car">
+                <div style="color: black;width:100%;font-size: 1.4em;height: 100%;display: flex;justify-content: center;align-items: center;">Enemy</div>
+            </div>
+            <div class="finish">
+                <div class="f_text">
+                    FINISH
+                </div>
+            </div>
+        </div>
+        <div class="ready_n">
+            <div class="tabl_n">
+                <span style="color: white; font-size:2em;">Are you ready?</span>
+                <div class="btn">
+                <button onclick=Start() class="button">Yes</button>
+                <a class="button" href="{% url 'garage' %}">No</a>
+                </div>
+            </div>
+        </div>
+        <div style="width: 100%;height:20%;display: flex;justify-content: center;">
+            <div>
+                <button onclick=init() class="button">Start</button>
+            </div>
+        </div>
+        <div class="finish_n">
+            <div class="tabl_n">
+                <div style="color: white; font-size:2em;display: flex;justify-content:center;gap:0.2em; width:100%;align-items:center;"><span id="gg">Your car broke down but you made money - 0</span> <img src="{% static 'ghc.png' %}" width="35px"height="35px"></div>
+                <div class="btn">
+                <a id="leave" href="" class="button">
+                    Back to garage
+                </a>
+            </div>
+        </div>
+    </div>
+    <script>
+        const roada = document.querySelector('.road');
+        var start = false   
+        var finish = 0
+        var myspeed = {{user.car.engine}}
+        var bot_speed = {{enemy.car.engine}}
+        var speedm = 0
+        var speede = 0
+        var drive = false
+        var gear_now_my = 1
+        var gear_now_b = 1
+        var win = false
+        var finish_one = false
+        var finish_two = false
+        var who_is_first = 0
+        var spedu_my,spedu_el;
+        var finished = false
+        var turbo = {% if user.car.turbo %}true{%else%}false{% endif %}
+        var money = {{enemy.lvl}}*5000
+        var token = '{{token}}'
+        var pk = '{{user.pk}}'
+ 
+        for(x=0;x<10;x++){
+            var roadlines = document.createElement('div');
+            roadlines.setAttribute('class','line');
+            roadlines.x = (x)*12
+            roadlines.style.left = roadlines.x + 'vw'
+            roada.appendChild(roadlines);
+        }
+
+
+        function movelines(){
+            var roadlines = document.querySelectorAll('.line');
+            var startline = document.querySelector('.start');
+            if (startline.offsetLeft>-100){
+                startline.style.left = startline.offsetLeft - Math.max({% if user.car.engine < 20 %}speedm/1,speede/1{% else %}speedm/5,speede/5{% endif %}) +'px'; 
+            }
+            roadlines.forEach(function(item){
+                item.x = item.offsetLeft;
+                if (item.x <= -100){
+                    item.x = item.x + roada.offsetWidth+110;
+                }
+                item.x = item.x - Math.max({% if user.car.engine < 20 %}speedm/1,speede/1{% else %}speedm/5,speede/5{% endif %});
+                item.style.left = item.x + 'px'; 
+            })
+        }
+
+
+
+        function movefinish() {
+            var fin = document.querySelector('.finish');
+            var play = document.querySelector('.mycar')
+            fin.style.left = fin.offsetLeft - Math.max({% if user.car.engine < 20 %}speedm/1,speede/1{% else %}speedm/5,speede/5{% endif %}) + 'px';
+        }
+
+        function grearup(){
+            var mygtxt = document.querySelector('#mygear');
+            var engtxt = document.querySelector('#engear');
+            if (speedm>={{user.car.first}} && gear_now_my == 1){
+                speedm = {{user.car.first}}
+                gear_now_my++
+                mygtxt.innerHTML = `Your Gear: ${gear_now_my}`
+            }
+            else if (speedm>={{user.car.second}} && gear_now_my == 2){
+                speedm = {{user.car.second}}
+                gear_now_my++
+                mygtxt.innerHTML = `Your Gear: ${gear_now_my}`
+            }
+            else if (speedm>={{user.car.third}} && gear_now_my == 3){
+                gear_now_my++
+                mygtxt.innerHTML = `Your Gear: ${gear_now_my}`
+                speedm = {{user.car.third}}
+            }
+            else if (speedm>={{user.car.fouth}} && gear_now_my == 4){
+                speedm = {{user.car.fouth}}
+                gear_now_my++
+                mygtxt.innerHTML = `Your Gear: ${gear_now_my}`
+            }
+            else if (speedm>={{user.car.fivth}} && gear_now_my == 5){
+                speedm = {{user.car.fivth}}
+                gear_now_my++
+                mygtxt.innerHTML = `Your Gear: ${gear_now_my}`
+            }
+            else if (speedm>={{user.car.max_speed}} && gear_now_my == 6){
+                speedm = {{user.car.max_speed}}
+                clearInterval(spedu_my)
+            }
+            if (speede>={{enemy.car.first}} && gear_now_b == 1){
+                gear_now_b++
+                engtxt.innerHTML = `Enemy Gear: ${gear_now_b}`
+                speede = {{enemy.car.first}}
+            }
+            else if (speede>={{enemy.car.second}} && gear_now_b == 2){
+                speede = {{enemy.car.second}}
+                gear_now_b++
+                engtxt.innerHTML = `Enemy Gear: ${gear_now_b}`
+            }
+            else if (speede>={{enemy.car.third}} && gear_now_b == 3){
+                speede = {{enemy.car.third}}
+                gear_now_b++
+                engtxt.innerHTML = `Enemy Gear: ${gear_now_b}`
+            }
+            else if (speede>={{enemy.car.fouth}} && gear_now_b == 4){
+                speede = {{enemy.car.fouth}}
+                gear_now_b++
+                engtxt.innerHTML = `Enemy Gear: ${gear_now_b}`
+            }
+            else if (speede>={{enemy.car.fivth}} && gear_now_b == 5){
+                speede = {{enemy.car.fivth}}
+                gear_now_b++
+                engtxt.innerHTML = `Enemy Gear: ${gear_now_b}`
+            }
+            else if (speede>={{enemy.car.max_speed}} && gear_now_b == 6){
+                speede = {{enemy.car.max_speed}}
+                clearInterval(spedu_el)
+            }
+            
+        }
+
+        function movecars(){
+            var player = document.querySelector('.mycar')
+            var bot = document.querySelector('.car')
+            var finis = document.querySelector('.finish')
+            var pt_x = (player.offsetLeft + (player.offsetWidth)/2)-((finis.offsetLeft) + (finis.offsetWidth)/2)
+            var pt_y = (player.offsetTop + (player.offsetHeight)/2)-((finis.offsetTop) + (finis.offsetHeight)/2)
+            grearup()
+            if (!finish_one){
+                if (Math.abs(pt_x)<=player.offsetWidth/2+(finis.offsetWidth-2)/2&&Math.abs(pt_y)<=player.offsetHeight/2+(finis.offsetHeight)/2){
+                    setTimeout(function () {
+                        finish++
+                        clearInterval(spedu_my)
+                    },1000)
+                    if(!finished){
+                        who_is_first = 1
+                        finished = true
+                    }
+                    finish_one=true
+                }
+            }
+            if (!finish_two){
+                pt_x = (bot.offsetLeft + (bot.offsetWidth)/2)-((finis.offsetLeft) + (finis.offsetWidth)/2)
+                pt_y = (bot.offsetTop + (bot.offsetHeight)/2)-((finis.offsetTop) + (finis.offsetHeight)/2)
+                if (Math.abs(pt_x)<=bot.offsetWidth/2+(finis.offsetWidth)/2&&Math.abs(pt_y)<=bot.offsetHeight/2+(finis.offsetHeight)/2){
+                    setTimeout(function() {
+                        finish++
+                        clearInterval(spedu_el)
+                    },1000)
+                    if(!finished){
+                        who_is_first = 2
+                        finished = true
+                    }
+                    finish_two=true
+                }
+            }
+            bot.style.left = bot.offsetLeft + (speede/20) +'px'
+            player.style.left = player.offsetLeft + (speedm/20)+'px'
+        }
+
+        function playarea() {
+            let road = roada.getBoundingClientRect()
+            var fin = document.querySelector('.finish')
+            var player = document.querySelector('.mycar')
+            var bot = document.querySelector('.car')
+            if (finish!=2) {
+                movelines()
+                movefinish()
+                movecars()
+                window.requestAnimationFrame(playarea)
+            }
+            else{
+                if (who_is_first==1){
+                    document.querySelector('#gg').innerHTML = `You Winner! Money erned - ${money}`
+                }
+                else if(who_is_first==2){
+                    document.querySelector('#gg').innerHTML = 'You lose but you can upgrade your car and next time may be you win! - 0'
+                    money = 0
+                }
+                document.querySelector('#leave').href = pk+'/'+token+'/'+money+'/'
+                document.querySelector('.finish_n').style.top = 0
+            }
+        }
+
+        function speedup_my(){
+            if (turbo&&gear_now_my>4){
+                speedm+=(myspeed*1.5)
+            }
+            else{
+                speedm+=myspeed
+            }
+            document.querySelector('#myspeed').innerHTML = `Your Speed: ${speedm}`
+        }
+
+        function speedup_en(){
+            speede+=bot_speed
+            document.querySelector('#enspeed').innerHTML = `Enemy Speed: ${speede}`
+        }
+
+        function Start(){
+            var n = document.querySelector('.ready_n')
+            n.style.top = '-100%'
+            new Audio("{% static 'drag_muz.mp3' %}").play()
+        }
+
+        function init() {
+            if(start){
+            }
+            else
+            {
+                var player = document.querySelector('.mycar')
+                var bot = document.querySelector('.car')
+                start = true
+                speedm+=myspeed
+                speede+=bot_speed
+                new Audio("{% static 'gaz.mp3' %}").play()
+                document.querySelector('#mygear').innerHTML = `Your Gear: ${gear_now_my}`
+                document.querySelector('#engear').innerHTML = `Enemy Gear: ${gear_now_b}`
+                spedu_my = setInterval(speedup_my,1000)
+                spedu_el = setInterval(speedup_en,1000)
+                window.requestAnimationFrame(playarea)
+            }
+        }
+    </script>
+</body>
+</html>

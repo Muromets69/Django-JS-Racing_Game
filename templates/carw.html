@@ -1,0 +1,113 @@
+{% extends 'garage.html' %}
+{% load static %}
+{% block links %}
+<style>
+    
+    .blockwork{
+        padding: 2em;
+        width: calc(100% - 4em);
+        height: 90vh;
+        background:url("{% static 'workshop.jpg' %}");
+        
+    }
+</style>
+{% endblock links %}
+
+{% block nav %}
+<div class="btn" style="width: calc(100% + 2em);text-align: center;"><a href="{% url 'garage' %}">Back to Garage</a></div>
+{% endblock nav %}
+
+{% block body %}
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);color: white; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 3em; background-color: rgba(0,0,0,0.6);padding:0.3em 0.5em;;border-radius: 0.4em;">
+        Car Workshop
+    </div>
+    <div class="blockwork">
+        <div style="background-color: rgba(0,0,0,0.6); border-radius:0.6em; padding:1em; height: 90vh;">
+            <div style="border-bottom:2px solid white;padding-bottom:0.3em;display: flex;justify-content:center;gap:0.2em; width:100%;align-items:center;font-size:1.8em;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;color:white;">
+                <div>
+                    Balance: {{user.balance}}
+                </div>
+                <img src="{% static 'ghc.png' %}" width="35px"height="35px">
+            </div>
+            <div style="display: flex;margin-top:1em;">
+                <div>
+                    <div style="width: 100%;color:white;font-size:1.2em;  text-align:center;">
+                        Your Car
+                    </div>
+                    <div>
+                        <img src="{% static 'ghoul_car.png' %}" width="300px" height="200px" />
+                    </div>
+                    <div style="width: 100%;color:white;font-size:1.2em;display:flex;flex-direction:column;">
+                        <span>Car name: {{user.car.name}}</span>
+                        <span>Car LVL: {{user.car.lvl}}</span>
+                    </div>
+                </div>
+                <div style="width: 100%; text-align:center; color:white; font-size:2em;">
+                    This is a place where you can upgrade your car characteristics.
+        
+                </div>
+            </div>
+            <div style="color: white;margin-top:1em;">
+                <div class="upg-item" style="display:flex;justify-content: space-evenly;width:100%">
+                    <div>
+                        <div style="font-size: 1.7em; width:100%; text-align:center;">
+                            Characteristics Car
+                        </div>
+                        <div style="display:flex;flex-direction:column;margin-top:1em;font-size: 1.2em;">
+                            <span>Engine: {{user.car.engine}}</span>
+                            <span>First gear: {{user.car.first}}</span>
+                            <span>Second gear: {{user.car.second}}</span>
+                            <span>Third gear: {{user.car.third}}</span>
+                            <span>Fourth gear: {{user.car.fouth}}</span>
+                            <span>Fiveth gear: {{user.car.fivth}}</span>
+                            <span>MAX SPEED: {{user.car.max_speed}}</span>
+                            <span>Wheels: {{user.car.wheels}}</span>
+                            <span>Turbo: {{user.car.turbo}}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.7em; width:100%; text-align:center;">
+                            Upgrade Car
+                        </div>
+                        <form action="{% url 'Upg' 1 %}" method="post" style="margin-top:1em;font-size: 1.2em;">
+                            {% csrf_token %}
+                            Engine:{% if user.car.engine > 40 %}MAX{% else %}{{user.car.engine}} + {{user.car.upgrade_eng}} -> {{ user.car.sum_eng }}{% endif %}
+                            {% if user.car.engine > 40 %}{% else %}<button type="submit" class="button">Upgrade - {{user.car.price_eng}}</button>{% endif %}
+                        </form>
+                        <form action="{% url 'Upg' 2 %}" method="post" style="display:flex;flex-direction:column;font-size: 1.2em;">
+                            {% csrf_token %}
+                            Gear:{% if user.car.max_speed > 350 %}MAX
+                            {% else %}
+                            <span>First gear: {{user.car.first}} + {{user.car.upgrade_gear1}} -> {{user.car.sum_gear1}}</span>
+                            <span>Second gear: {{user.car.second}} + {{user.car.upgrade_gear2}} -> {{user.car.sum_gear2}}</span>
+                            <span>Third gear: {{user.car.third}} + {{user.car.upgrade_gear3}} -> {{user.car.sum_gear3}}</span>
+                            <span>Fourth gear: {{user.car.fouth}} + {{user.car.upgrade_gear4}} -> {{user.car.sum_gear4}}</span>
+                            <span>Fiveth gear: {{user.car.fivth}} + {{user.car.upgrade_gear5}} -> {{user.car.sum_gear5}}</span>
+                            <span>MAX SPEED: {{user.car.max_speed}} + {{user.car.upgrade_gear6}} -> {{user.car.sum_gear6}}</span>
+                            <button type="submit" class="button">Upgrade - {{user.car.price_gear}}</button>
+                            {% endif %}
+                        </form>
+                        <form action="{% url 'Upg' 3 %}" method="post" style="font-size: 1.2em; margin-top:1em;">
+                            {% csrf_token %}
+                            Wheels:{% if user.car.wheels > 15 %}MAX{% else %}{{user.car.wheels}} + {{user.car.upgrade_wheels}} -> {{ user.car.sum_wheels }}{% endif %}
+                            {% if user.car.wheels > 15 %}{% else %}<button type="submit" class="button">Upgrade - {{user.car.price_wheels}}</button>{% endif %}
+                        </form>
+                        <form action="{% url 'Upg' 4 %}" method="post" style="font-size: 1.2em;">
+                            {% csrf_token %}
+                            {% if user.car.lvl >= 10 %}
+                            <span>Turbo: {{user.car.turbo}}</span>
+                            {% if user.car.turbo %}{% else %}<button type="submit" class="button">Upgrade - {{user.car.price_turbo}}</button>{% endif %}
+                            {% else %}
+                            <span>Turbo: You can`t buy turbo to 10 car lvl</span>
+                            {% endif %}
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+{% endblock script %}
