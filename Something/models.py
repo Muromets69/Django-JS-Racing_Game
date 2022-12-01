@@ -118,3 +118,9 @@ class Newuser(AbstractUser):
         fif = fo*1.2
         car = Car.objects.create(engine=1,first=gear,second=gear*1.9,third=th,fouth=fo,fivth=fif,wheels=2,max_speed=fif+randint(20,40),turbo=False)
         self.car = car
+
+class Room(models.Model):
+    name = models.CharField("ROOM",max_length=50)
+    player_1 = models.ForeignKey("Newuser",verbose_name="user",on_delete=models.SET_NULL,blank=True,default=None,null=True,related_name='person1')
+    player_2 = models.ForeignKey("Newuser",verbose_name="user2",on_delete=models.SET_NULL,blank=True,default=None,null=True,related_name='person2')
+    num = models.PositiveSmallIntegerField("Count",default=1)

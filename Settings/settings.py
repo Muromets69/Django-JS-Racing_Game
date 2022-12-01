@@ -34,6 +34,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels_redis',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -99,7 +102,15 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Settings.wsgi.application'
+ASGI_APPLICATION = 'Settings.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 
 # Database
@@ -197,3 +208,4 @@ EMAIL_PORT = '587'
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'wertunwertun43@gmail.com'
 EMAIL_HOST_PASSWORD = 'aoxhlcwvqkukhmrn'
+

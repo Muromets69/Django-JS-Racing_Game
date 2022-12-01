@@ -16,3 +16,6 @@ class CustomSocialSignupForm(SignupForm):
     
 class Form_Dist(forms.Form):
     select = forms.ChoiceField(choices=((1,"1/4 Miles"),(2,"1/2 Miles")))
+    
+class CreateRoom(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Room Name'}),max_length=50, label='Room Name')

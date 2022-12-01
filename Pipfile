@@ -12,6 +12,9 @@ dj-database-url = "*"
 whitenoise = "*"
 django-allauth = "*"
 django-crispy-forms = "*"
+channels = "*"
+channels-redis = "*"
+daphne = "*"
 
 [dev-packages]
 

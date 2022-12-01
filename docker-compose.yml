@@ -3,25 +3,36 @@ services:
   db:
     image: postgres:13
     volumes:
-    - postgres_data:/var/lib/postgresql/data/
+      - postgres_data:/var/lib/postgresql/data/
     environment:
-    - "POSTGRES_HOST_AUTH_METHOD=trust"
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+    links:
+      - redis
+
+  redis:
+    image: redis
+    volumes:
+      - ./data:/data
+    ports:
+      - 6379:6379
+
   web:
     build: .
     command: python /code/manage.py runserver 0.0.0.0:8000
     environment:
-    - ENVIRONMENT=development
-    - DEBUG=1
+      - ENVIRONMENT=development
+      - DEBUG=1
     volumes:
-    - .:/code
-    - media:/code/media/
-    - static:/code/static/
+      - .:/code
+      - media:/code/media/
+      - static:/code/static/
     ports:
-    - 8000:8000
+      - 8000:8000
     depends_on:
-    - db
+      - db
   
 volumes:
+  redis:
   postgres_data:
   media:
   static:

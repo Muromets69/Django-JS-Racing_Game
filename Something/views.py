@@ -9,8 +9,8 @@ from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.urls import reverse_lazy
 from .tokens import account_activation_token,moneytoken
-from .models import Enemy
-from .forms import Form_Dist
+from .models import Enemy,Room
+from .forms import Form_Dist,CreateRoom
 
 
 class index(View):
@@ -124,6 +124,61 @@ class Drag_Racing_Payment(View,LoginRequiredMixin,UserPassesTestMixin):
         own = get_user_model().objects.get(pk=self.kwargs['pk'])
         return moneytoken.check_token(self.request.user,self.kwargs['token']) and self.request.user == own
 
+class Chat(View):
+    def get(self,req):
+        if self.request.user.is_authenticated==False:
+            return redirect('account_login')
+        return render(request=req, template_name="chat.html")
+    
+class LobbiesView(View):
+    def get(self,req):
+        try:
+            room = Room.objects.get(player_1=req.user)
+            room.delete()
+        except Room.DoesNotExist:
+            pass
+        rooms = Room.objects.all().filter(num=1)
+        return render(request=req, template_name='lobbys.html', context={'rooms':rooms,"form":CreateRoom()})
+    
+    def post(self,req):
+        room_name = req.POST['name']
+        Room.objects.create(name=room_name,player_1=req.user)
+        return redirect(reverse_lazy("room",kwargs={"room":room_name}))
+    
+class Connect(View):
+    def get(self,req,*args, **kwargs):
+        try:
+            Room.objects.get(name=kwargs['room'])
+        except Room.DoesNotExist:
+            return redirect("lobby")
+        return render(request=req, template_name="online.html", context={"room":kwargs['room']})
+    
+class Join(View):
+    def get(self,req,*args, **kwargs):
+        try:
+            room = Room.objects.get(name=kwargs['room'])
+        except Room.DoesNotExist:
+            return redirect("lobby")
+        user = room.player_1
+        room.player_2 = self.request.user
+        room.num += 1
+        room.save()
+        return render(request=req, template_name="join.html", context={"room":kwargs['room'],'enemy':user})
+    
+def endrace(request):
+    try:
+        room = Room.objects.get(player_1=request.user)
+        room.delete()
+        return redirect("garage")
+    except Room.DoesNotExist:
+        try:
+            room = Room.objects.get(player_2=request.user)
+            room.player_2 = None
+            room.num -= 1
+            room.save()
+        except Room.DoesNotExist:
+            pass
+        return redirect("garage")
 
 @login_required
 def custom_logout(request):

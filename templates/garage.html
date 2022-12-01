@@ -119,13 +119,14 @@
                 </div>
             <div class="flex btn">
                 {% if user.ghoul_lvl > 25 %}<div class="button">Max Drag Lvl</div>{% else %}<div class="button" onclick=openy()>Race with Bot</div>{% endif %}
-                <a href="">Online Race</a>
+                <a href="{% url 'lobby' %}">Online Race</a>
                 <a href="{% url 'up' %}">Money Up</a>
             </div>
             <div class="btn flex"><a href="{% url 'carw' %}">Car Workshop</a><a href="{% url 'home' %}">Back to homepage</a></div>
             </div>
             <div style="width: 100%;text-align: center; color: white;">
-                {% if user.ghoul_lvl > 25 %}You are the king of the road!{% else %}Your drag lvl - {{user.ghoul_lvl}}{% endif %}
+                <span>{% if user.ghoul_lvl > 25 %}You are the king of the road!{% else %}Your drag lvl - {{user.ghoul_lvl}}{% endif %}</span>
+                <span><a class="button" href="{% url 'chat' %}">World Chat</a></span>
             </div>
         </div>
         {% else %}

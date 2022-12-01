@@ -5,3 +5,4 @@ from .models import *
 admin.site.register(get_user_model())
 admin.site.register(Car)
 admin.site.register(Enemy)
+admin.site.register(Room)
