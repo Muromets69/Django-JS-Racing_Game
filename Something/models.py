@@ -102,7 +102,6 @@ class Car(models.Model):
 
 class Newuser(AbstractUser):
     username = models.CharField("username",max_length=50,unique=True,default='NoName')
-    name = models.CharField("NAME",max_length=50,default="NONAME")
     ghoul_lvl = models.PositiveIntegerField("POWER",default=1)
     img = models.ImageField("IMG", upload_to='users/',default='users/zxc.jpg')
     balance = models.PositiveIntegerField("BALANCE",default=100)
@@ -120,7 +119,7 @@ class Newuser(AbstractUser):
         self.car = car
 
 class Room(models.Model):
-    name = models.CharField("ROOM",max_length=50)
+    name = models.CharField("ROOM",max_length=50,unique=True)
     player_1 = models.ForeignKey("Newuser",verbose_name="user",on_delete=models.SET_NULL,blank=True,default=None,null=True,related_name='person1')
     player_2 = models.ForeignKey("Newuser",verbose_name="user2",on_delete=models.SET_NULL,blank=True,default=None,null=True,related_name='person2')
     num = models.PositiveSmallIntegerField("Count",default=1)

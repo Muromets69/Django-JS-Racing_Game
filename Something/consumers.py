@@ -2,7 +2,7 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer,WebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Newuser
+from .models import Newuser,Room
 from asgiref.sync import async_to_sync
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -54,6 +54,13 @@ class GonkaCons(AsyncWebsocketConsumer):
     def get_user_car(self,pk):
         return Newuser.objects.get(pk=pk).car
     
+    @database_sync_to_async
+    def delete_room(self):
+        try:
+            Room.objects.get(name=self.room_name).delete()
+        except Room.DoesNotExist:
+            pass
+    
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room"]
         self.room_group_name = "chat_%s" % self.room_name
@@ -73,11 +80,10 @@ class GonkaCons(AsyncWebsocketConsumer):
         
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        mess = text_data_json['message']
         # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message_gg", "message": mess}
-        ) 
+        await self.delete_room()
+         
+        
         
     async def chat_message_gg(self, event):
         message = event["message"]

@@ -6,14 +6,18 @@
         {{form}}
         <button type='submit' class='button'>Create Race</button>
     </form>
+    {% if rooms_len %}
     {% for room in rooms %}
-    <div>
-        {{room.name}} - {{room.num}}/2  
-        <a href="{% url 'join' room.name %}">Join</a>  
-    <div>
+    <div style="width:100%;height:50px;display:flex; justify-content:space-between;align-items:center; border-top:2px solid white;gap:0.4em;">
+        <div>{{room.name}} - {{room.num}}/2</div>
+        <div>Creator: <a href="{% url 'user_d' room.player_1.pk %}" style="color:blue;text-decoration:none;">{{room.player_1.username}}</a></div>  
+        <div><a href="{% url 'join' room.name %}" class="button">Join</a></div>
+    </div>
     {% endfor %}
+    {% else %}
     <div>
         Don`t have rooms. You can create someone.
     </div>
+    {% endif %}
 </div>
 {% endblock body %}

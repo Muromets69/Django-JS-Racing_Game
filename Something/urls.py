@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index,custom_logout,Connect,LobbiesView,Join,endrace,activate,activateEmail,garage,carworkshop,Chat,Upgrade,Money_Up_View,Monay_Up_Payment,Drag_Racing,Drag_Racing_Payment
+from .views import index,custom_logout,Connect,LobbiesView,Join,endrace,DetailUserView,activate,activateEmail,garage,carworkshop,Chat,Upgrade,Money_Up_View,Monay_Up_Payment,Drag_Racing,Drag_Racing_Payment
 
 urlpatterns = [
     path('',index.as_view(),name='home'),
@@ -18,4 +18,5 @@ urlpatterns = [
     path("game/online_1/<room>/",Connect.as_view(),name="room"),
     path("game/online_2/<room>/",Join.as_view(),name="join"),
     path("finish/",endrace,name="end"),
+    path("user_detail/<pk>/",DetailUserView.as_view(),name="user_d"),
 ]

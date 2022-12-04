@@ -153,7 +153,7 @@
         <div class="tabl">
             <div style="display: flex;width:100%;justify-content: space-between;">
                 <div style="display: flex;flex-direction: column;color: white;height: 100%;">
-                    <span>You - {{user.name}}</span>
+                    <span>You - {{user.username}}</span>
                     <span>Your car name - {{user.car.name}}</span>
                     <span>Your lvl - {{user.ghoul_lvl}}</span>
                 </div>
@@ -445,6 +445,9 @@
                 }
                 document.querySelector('#leave').href = "{% url 'end' %}"
                 document.querySelector('.finish_n').style.top = 0
+                chatSocket.send(JSON.stringify({
+                    'message': "gg"
+                }));
             }
         }
 

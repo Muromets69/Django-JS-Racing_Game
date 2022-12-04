@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic import View
+from django.views.generic import View,DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.urls import reverse_lazy
 from .tokens import account_activation_token,moneytoken
@@ -132,13 +132,19 @@ class Chat(View):
     
 class LobbiesView(View):
     def get(self,req):
+        if self.request.user.is_authenticated==False:
+            return redirect('account_login')
         try:
             room = Room.objects.get(player_1=req.user)
             room.delete()
         except Room.DoesNotExist:
             pass
         rooms = Room.objects.all().filter(num=1)
-        return render(request=req, template_name='lobbys.html', context={'rooms':rooms,"form":CreateRoom()})
+        if len(rooms)>0:
+            rm = True
+        else:
+            rm = False
+        return render(request=req, template_name='lobbys.html', context={'rooms':rooms,"form":CreateRoom(),'rooms_len':rm})
     
     def post(self,req):
         room_name = req.POST['name']
@@ -179,6 +185,11 @@ def endrace(request):
         except Room.DoesNotExist:
             pass
         return redirect("garage")
+
+class DetailUserView(DetailView):
+    template_name = "detail.html"
+    model = get_user_model()
+    context_object_name = "useri"
 
 @login_required
 def custom_logout(request):

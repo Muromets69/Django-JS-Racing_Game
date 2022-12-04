@@ -92,6 +92,7 @@
     {% block links %}
     {% endblock links %}
 </head>
+    {% block full %}
     <div id="llg" style="width: 100%;position: absolute;top:-100%;z-index: 10000;height: 100vh;background-color: rgba(25,25,25,0.9);transition: all ease 300ms;">
         <form action="{% url 'drag' %}" method="get" style="color:white;position: absolute;top: 50%;left: 50%;transform: translate(-50%,-50%);display: flex;gap:0.4em;flex-direction: column;">
             {{form}}
@@ -102,19 +103,20 @@
     <div style="position: relative; width: 100%; height: 100vh; overflow: hidden; z-index: -1;">
         <img src="{% static 'garage1.jpg' %}" width="100%" height="100%" style="object-fit: cover; object-position: 25%;">
     </div>
+    {% endblock full %}
     <nav class="navbar">
         {% block nav %}
         {% if user.is_authenticated %}
         <div style="display: flex;flex-direction: column;width: 100%;gap: 1em;">
             <div style="display: flex; gap:1em;width: 100%;justify-content: space-between;">
-                <div>
-                    <span style="color: red;font-size: 1.4em;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;" >{{user.name}}</span>
+                <div style="display: flex; gap:1em;">
+                    <span><a href="{% url 'home' %}" style="color: red;text-decoration:none;font-size: 1.4em;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;">{{user.username}}</a></span>
                 {% if user.active %}
-                    <div style="color:white;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 16px;">
+                    <span style="color:white;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 16px;">
                         Activated
-                    </div>
+                    </span>
                 {% else %}
-                    <a href="{% url 'act' %}" style="color: red; text-decoration: none; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 20px;">Active now!</a>
+                    <a href="{% url 'act' %}" style="color: red; text-decoration: none; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 16px;">Active now!</a>
                 {% endif %}
                 </div>
             <div class="flex btn">

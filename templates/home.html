@@ -93,13 +93,13 @@
     <nav class="navbar">
         {% if user.is_authenticated %}
         <div style="display: flex; gap:1em;">
-            <span><a href="{% url 'home' %}" style="color: red;text-decoration:none;font-size: 1.4em;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;">{{user.name}}</a></span>
+            <span><a href="{% url 'home' %}" style="color: red;text-decoration:none;font-size: 1.4em;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;">{{user.username}}</a></span>
             {% if user.active %}
-                <div style="color:white;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 16px;">
-                    Activated
-                </div>
+            <span style="color:white;font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 16px;">
+                Activated
+            </span>
             {% else %}
-                <a href="{% url 'act' %}" style="color: red; text-decoration: none; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 20px;">Active now!</a>
+                <a href="{% url 'act' %}" style="color: red; text-decoration: none; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size: 16px;">Active now!</a>
             {% endif %}
         </div>
         <div class="btn"><a href="{% url 'logout' %}">Leave</a></div>
