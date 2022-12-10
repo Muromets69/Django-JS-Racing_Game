@@ -7,23 +7,24 @@ class Enemy(models.Model):
     car = models.ForeignKey("Car",verbose_name="MYCAR",on_delete=models.SET_NULL,blank=True,default=None,null=True)
 
     def set_car(self):
-        gear = self.lvl * 15
-        sec = gear*1.9
-        th = sec*2
-        fo = th*1.5
-        fif = fo*1.3
-        six = fif+25
-        turbo = False
-        if (self.lvl > 10):
-            turbo=True
-        if (fif>310):
+        if (self.lvl>20):
             gear=101
             sec=145
-            third=200
+            th=200
             fo=270
             fif=300
             six=300+randint(20,40)
-        car = Car.objects.create(engine=(self.lvl*2),first=gear,second=sec,third=th,fouth=fo,fivth=fif,wheels=2,max_speed=six,turbo=turbo)
+        else:
+            gear = self.lvl * 15
+            sec = gear*1.9
+            th = sec*2
+            fo = th*1.5
+            fif = fo*1.3
+            six = fif+25
+            turbo = False
+        if (self.lvl > 10):
+            turbo=True
+        car = Car.objects.create(engine=((self.lvl+1)*2),first=gear,second=sec,third=th,fouth=fo,fivth=fif,wheels=2,max_speed=six,turbo=turbo)
         self.car = car
 
 class Car(models.Model):
@@ -115,7 +116,7 @@ class Newuser(AbstractUser):
         th = sec*1.8
         fo = th*1.3
         fif = fo*1.2
-        car = Car.objects.create(engine=1,first=gear,second=gear*1.9,third=th,fouth=fo,fivth=fif,wheels=2,max_speed=fif+randint(20,40),turbo=False)
+        car = Car.objects.create(engine=2.4,first=gear,second=gear*1.9,third=th,fouth=fo,fivth=fif,wheels=2,max_speed=fif+randint(20,40),turbo=False)
         self.car = car
 
 class Room(models.Model):

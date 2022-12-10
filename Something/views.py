@@ -27,10 +27,11 @@ class garage(View,LoginRequiredMixin):
     def get(self,request):
         if self.request.user.is_authenticated==False:
             return redirect('account_login')
-        if request.user.car==None:
-            request.user.set_car(20)
-            request.user.save()
-        return render(request=request,template_name='garage.html',context={'form':Form_Dist()})
+        else:
+            if request.user.car==None:
+                request.user.set_car(20)
+                request.user.save()
+            return render(request=request,template_name='garage.html',context={'form':Form_Dist()})
 
 class Upgrade(View,LoginRequiredMixin):
     def post(self,request,pk):

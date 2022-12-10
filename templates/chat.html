@@ -1,6 +1,8 @@
 {% extends 'home.html' %}
+{% load static %}
 {% block body %}
 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);display:flex;flex-direction:column;gap:1em;background-color: rgba(0,0,0,0.8);padding:1em;border-radius:0.8em">
+    <input id="chat" class="button" type="button" value="On music" onclick=music() style="border:2px solid white;">
     <div>
         <textarea readonly id="chat-log" cols="120" rows="20" style="border:2px solid red;background:black;border-radius:1em;padding:0.2em;color:red;max-width:80vw;max-height:50vh;min-width:80vw;min-height:50vh;"></textarea><br>
         <input id="chat-message-input" type="text" size="100" style="width:100%;border:2px solid red;background:black;border-radius:0.4em;outline:none;padding:0.2em;color:red;"><br>
@@ -11,6 +13,8 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+    var enable = false
+    var mus;
 
     const chatSocket = new WebSocket(
         'ws://'
@@ -20,9 +24,32 @@
         + '/'
     );
 
+    chatSocket.onopen = function(){
+            mus = new Audio("{% static 'work_n.mp3' %}")
+            mus.loop = true;
+            mus.play()
+            mus.currentTime = 12
+            document.getElementById("chat").value = "Off music"
+            enable = true
+    }
+
+    function music(){
+        if (!enable){
+            mus.play()
+            document.getElementById("chat").value = "Off music"
+            enable = true
+        }
+        else{
+            mus.pause()
+            enable = false
+            document.getElementById("chat").value = "On music"
+        }
+    }
+
     chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         document.querySelector('#chat-log').value += (data.message + '\n');
+        
     };
 
     chatSocket.onclose = function(e) {

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Money Up</title>
 </head>
+<link rel="icon" href="{% static 'fav.ico' %}">
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
     body{
@@ -45,7 +46,7 @@
     }
     .line{
         width: 18px;
-        height: 150px;
+        height: 17vh;
         position: absolute;
         background-color: white;
         margin-left: 147px;
@@ -53,14 +54,14 @@
     
     .line_s{
         width: 18px;
-        height: 530px;
+        height: 1530px;
         position: absolute;
         background-color: rgb(255, 255, 255);
         margin-left: 294px;
     }
     .line_r{
         width: 18px;
-        height: 150px;
+        height: 17vh;
         position: absolute;
         background-color: white;
         margin-left: 441px;
@@ -217,8 +218,8 @@
             var roadlines = document.querySelectorAll('.line');
             roadlines.forEach(function(item){
                 item.y = item.offsetTop;
-                if (item.y >= 800){
-                    item.y = item.y - 900;
+                if (item.y >= roada.offsetHeight){
+                    item.y = item.y - roada.offsetHeight;
                 }
                 item.y = item.y + player.step;
                 item.style.top = item.y + 'px'; 
@@ -230,8 +231,8 @@
             var roadlines_2 = document.querySelectorAll('.line_r');
             roadlines_2.forEach(function(item){
                 item.y = item.offsetTop;
-                if (item.y >= 800){
-                    item.y = item.y - 900;
+                if (item.y >= roada.offsetHeight){
+                    item.y = item.y - roada.offsetHeight;
                 }
                 item.y = item.y + player.step;
                 item.style.top = item.y + 'px'; 
@@ -248,7 +249,7 @@
                     player.start = false;
                     finish()
                 }
-                if (it.offsetTop > 750){
+                if (it.offsetTop > roada.offsetHeight){
                     var m = Math.floor(Math.random() * 3)
                     it.style.top = (((num+1)*400)*-1)+'px'
                     it.style.backgroundImage = 'url('+bgss[m]+')';
@@ -271,8 +272,7 @@
                     player.start = false;
                     finish()
                 }
-
-                if (it.offsetTop > 750){
+                if (it.offsetTop > roada.offsetHeight){
                     it.style.top = (((num+1)*400)*-1)+'px'
                     var m = Math.floor(Math.random() * 3)
                     it.style.backgroundImage = 'url('+bgss[m]+')';
@@ -344,8 +344,8 @@
             for(x=0;x<8;x++){
                 var roadlines = document.createElement('div');
                 roadlines.setAttribute('class','line');
-                roadlines.y = x*180
-                roadlines.style.top = roadlines.y + 'px'
+                roadlines.y = x*20
+                roadlines.style.top = roadlines.y + 'vh'
                 roada.appendChild(roadlines);
                 if (x%2==0){
                 var roadlines_1 = document.createElement('div');
@@ -356,8 +356,8 @@
                 }
                 var roadlines_2 = document.createElement('div');
                 roadlines_2.setAttribute('class','line_r');
-                roadlines_2.y = x*180
-                roadlines_2.style.top = roadlines.y + 'px'
+                roadlines_2.y = x*20
+                roadlines_2.style.top = roadlines.y + 'vh'
                 roada.appendChild(roadlines_2);
             }
             for (x=0;x<cars;x++){

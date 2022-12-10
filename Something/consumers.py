@@ -13,7 +13,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         await self.channel_layer.group_add(self.room_group_name,self.channel_name)
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message", "message": f"{name} is connected!"}
+            self.room_group_name, {"type": "chat_message", "message": f"{name} - connected!"}
         )
         
         await self.accept()
@@ -21,7 +21,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         name = self.scope["url_route"]["kwargs"]["user"]
         await self.channel_layer.group_send(
-            self.room_group_name, {"type": "chat_message", "message": f"{name} is disconnected!"}
+            self.room_group_name, {"type": "chat_message", "message": f"{name} - disconnected!"}
         )
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         
@@ -42,7 +42,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Send message to WebSocket
         await self.send(text_data=json.dumps({"message": message}))
         
+
+class Con(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.room_name = self.scope["url_route"]
+        self.room_group_name = "gg"
+        await self.channel_layer.group_add(self.room_group_name,self.channel_name)
         
+        await self.accept()
+        
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         
         
 class GonkaCons(AsyncWebsocketConsumer):

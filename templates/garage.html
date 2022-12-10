@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghoul Home</title>
+    <title>Ghoul Garage</title>
+    <link rel="icon" href="{% static 'fav.ico' %}">
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
     body{
@@ -120,14 +121,14 @@
                 {% endif %}
                 </div>
             <div class="flex btn">
-                {% if user.ghoul_lvl > 25 %}<div class="button">Max Drag Lvl</div>{% else %}<div class="button" onclick=openy()>Race with Bot</div>{% endif %}
+                {% if user.ghoul_lvl > 24 %}<div class="button">Max Drag Lvl</div>{% else %}<div class="button" onclick=openy()>Race with Bot</div>{% endif %}
                 <a href="{% url 'lobby' %}">Online Race</a>
                 <a href="{% url 'up' %}">Money Up</a>
             </div>
             <div class="btn flex"><a href="{% url 'carw' %}">Car Workshop</a><a href="{% url 'home' %}">Back to homepage</a></div>
             </div>
             <div style="width: 100%;text-align: center; color: white;">
-                <span>{% if user.ghoul_lvl > 25 %}You are the king of the road!{% else %}Your drag lvl - {{user.ghoul_lvl}}{% endif %}</span>
+                <span>{% if user.ghoul_lvl > 24 %}You are the king of the road!{% else %}Your drag lvl - {{user.ghoul_lvl}}{% endif %}</span>
                 <span><a class="button" href="{% url 'chat' %}">World Chat</a></span>
             </div>
         </div>
